@@ -1,0 +1,56 @@
+{% extends "_base.html" %}
+
+{% block center_content %}
+
+{% if post %}
+  <form action="{{ url_for('posts.edit_post', id=post.id) }}" method="post">
+{% else %}
+ <form action="{{ url_for('posts.add_post') }}" method="post">
+{% endif %}
+
+  <div class="mb-3">
+    <label for="exampleInputEmail1" class="form-label">Назва статті</label>
+
+    {% if post %}
+      <input type="text" class="form-control" name="title" value="{{ request.form.title or post.title }}">
+    {% else %}
+      <input type="text" class="form-control" name="title" value="{{ request.form.title }}">
+    {% endif %}
+
+  </div>
+  <div class="mb-3">
+    <label for="exampleInputEmail1" class="form-label">Текст</label>
+
+    {% if post %}
+      <textarea class="form-control" name="text">{{ request.form.text or post.text }}</textarea>
+    {% else %}
+      <textarea class="form-control" name="text">{{ request.form.text }}</textarea>
+    {% endif %}
+
+  </div>
+
+  {% if post %}
+    <input type="text" name="user_id" value="{{ post.user_id }}" hidden>
+  {% else %}
+    <select name="user_id">
+      {% for user in users %}
+          <label>Виберіть користувача</label>
+          <option value="{{ user.id }}">{{ user.last_name }} {{ user.first_name }}</option>
+      {% endfor %}
+    </select>
+  {% endif %}
+
+  <div class="mb-3">
+    <label for="exampleInputPassword1" class="form-label">Пароль адміністратора</label>
+    <input type="password" class="form-control" id="exampleInputPassword1" name="password">
+  </div>
+  <button type="submit" class="btn btn-primary">{% if post %} Редагувати статтю {% else %} Додати {% endif %}</button>
+
+  {% with messages = get_flashed_messages() %}
+    {% for message in messages %}
+      <div id="emailHelp" class="form-text">{{ message }}</div>
+    {% endfor %}
+  {% endwith %}
+
+</form>
+{% endblock center_content %}
